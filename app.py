@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 # IMPORTANT: This must be AFTER creating db variable to prevent
 # circular import issues
-from models import Person
+import models
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(
@@ -48,6 +48,20 @@ def on_chat(data): # data is whatever arg you pass in your emit call on client
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
     socketio.emit('chat',  data, broadcast=True, include_self=False)
+
+@socketio.on('login')
+def on_login(data):
+    print(str(data))
+    new_user = models.Person(username=data['username'], email="{0}@dumb.com".format(data['username']))
+    db.session.add(new_user)
+    db.session.commit()
+    all_users = models.Person.query.all()
+    def get_username(person):
+        return person.username
+    
+    all_usernames = map(all_users, get_username)
+    print(all_users)
+    socketio.emit('user_list', {'all_users': all_usernames})
 
 # Note we need to add this line so we can import app in the python shell
 if __name__ == "__main__":

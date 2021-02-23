@@ -9,6 +9,7 @@ const socket = io(); // Connects to socket connection
 function App() {
   const [messages, setMessages] = useState([]); // State variable, list of messages
   const inputRef = useRef(null); // Reference to <input> element
+  const loginRef = useRef(null);
 
   function onClickButton() {
     if (inputRef != null) {
@@ -17,6 +18,13 @@ function App() {
       // render it on the UI.
       setMessages(prevMessages => [...prevMessages, message]);
       socket.emit('chat', { message: message });
+    }
+  }
+
+  function onClickLogin() {
+    if (loginRef != null) {
+      const username = loginRef.current.value;
+      socket.emit('login', { username: username });
     }
   }
 
@@ -33,11 +41,20 @@ function App() {
       // add it to the list of messages to render it on the UI.
       setMessages(prevMessages => [...prevMessages, data.message]);
     });
+
+    socket.on('user_list', (data) => {
+      console.log('User list event received!');
+      console.log(data);
+    });
   }, []);
 
   return (
     <div>
       <h1>Chat Messages</h1>
+      <div>
+        Enter username here: <input ref={loginRef} type="text" />
+        <button onClick={onClickLogin}>Login</button>
+      </div>
       Enter message here: <input ref={inputRef} type="text" />
       <button onClick={onClickButton}>Send</button>
       <ul>
