@@ -9,7 +9,8 @@ const socket = io(); // Connects to socket connection
 function App() {
   const [messages, setMessages] = useState([]); // State variable, list of messages
   const inputRef = useRef(null); // Reference to <input> element
-  const loginRef = useRef(null);
+  const joinRef = useRef(null); // Reference to <input> element
+  const [userList, setUserList] = useState([]);
 
   function onClickButton() {
     if (inputRef != null) {
@@ -21,10 +22,10 @@ function App() {
     }
   }
 
-  function onClickLogin() {
-    if (loginRef != null) {
-      const username = loginRef.current.value;
-      socket.emit('login', { username: username });
+  function onClickJoin() {
+    if (joinRef != null) {
+      const username = joinRef.current.value;
+      socket.emit('join', { 'user': username });
     }
   }
 
@@ -45,21 +46,24 @@ function App() {
     socket.on('user_list', (data) => {
       console.log('User list event received!');
       console.log(data);
+      setUserList(data.users);
     });
   }, []);
 
   return (
     <div>
       <h1>Chat Messages</h1>
-      <div>
-        Enter username here: <input ref={loginRef} type="text" />
-        <button onClick={onClickLogin}>Login</button>
-      </div>
       Enter message here: <input ref={inputRef} type="text" />
       <button onClick={onClickButton}>Send</button>
       <ul>
         {messages.map((item, index) => <ListItem key={index} name={item} />)}
       </ul>
+      <div>
+        <h3>All Users (History)</h3>
+        Enter username here: <input ref = { joinRef } type="text" />
+        <button onClick={onClickJoin}>Join</button>
+        {userList.map((user, index) => <ListItem key={index} name={user} />)}
+      </div>
     </div>
   );
 }
