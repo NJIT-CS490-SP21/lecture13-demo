@@ -60,15 +60,25 @@ def on_chat(data): # data is whatever arg you pass in your emit call on client
 @socketio.on('join')
 def on_join(data): # data is whatever arg you pass in your emit call on client
     print(str(data))
-    new_user = models.Person(username=data['user'], email='{0}@stuff.com'.format(data['user']))
+    users = add_user(data['user'])
+    # new_user = models.Person(username=data['user'], email='{0}@stuff.com'.format(data['user']))
+    # db.session.add(new_user)
+    # db.session.commit()
+    # all_people = models.Person.query.all()
+    # users = []
+    # for person in all_people:
+    #     users.append(person.username)
+    socketio.emit('user_list', {'users': users})
+
+def add_user(username):
+    new_user = models.Person(username=username, email='{0}@stuff.com'.format(username))
     db.session.add(new_user)
     db.session.commit()
     all_people = models.Person.query.all()
     users = []
     for person in all_people:
         users.append(person.username)
-    socketio.emit('user_list', {'users': users})
-    
+    return users
 
 # Note we need to add this line so we can import app in the python shell
 if __name__ == "__main__":
