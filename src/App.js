@@ -11,13 +11,14 @@ function App() {
   const inputRef = useRef(null); // Reference to <input> element
   const joinRef = useRef(null); // Reference to <input> element
   const [userList, setUserList] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   function onClickButton() {
     if (inputRef != null) {
       const message = inputRef.current.value;
-      // If your own client sends a message, we add it to the list of messages to 
+      // If your own client sends a message, we add it to the list of messages to
       // render it on the UI.
-      setMessages(prevMessages => [...prevMessages, message]);
+      setMessages((prevMessages) => [...prevMessages, message]);
       socket.emit('chat', { message: message });
     }
   }
@@ -25,7 +26,8 @@ function App() {
   function onClickJoin() {
     if (joinRef != null) {
       const username = joinRef.current.value;
-      socket.emit('join', { 'user': username });
+      socket.emit('join', { user: username });
+      setIsLoggedIn(true);
     }
   }
 
@@ -40,7 +42,7 @@ function App() {
       console.log(data);
       // If the server sends a message (on behalf of another client), then we
       // add it to the list of messages to render it on the UI.
-      setMessages(prevMessages => [...prevMessages, data.message]);
+      setMessages((prevMessages) => [...prevMessages, data.message]);
     });
 
     socket.on('user_list', (data) => {
@@ -56,13 +58,21 @@ function App() {
       Enter message here: <input ref={inputRef} type="text" />
       <button onClick={onClickButton}>Send</button>
       <ul>
-        {messages.map((item, index) => <ListItem key={index} name={item} />)}
+        {messages.map((item, index) => (
+          <ListItem key={index} name={item} />
+        ))}
       </ul>
       <div>
         <h3>All Users (History)</h3>
-        Enter username here: <input ref = { joinRef } type="text" />
-        <button onClick={onClickJoin}>Join</button>
-        {userList.map((user, index) => <ListItem key={index} name={user} />)}
+        {!isLoggedIn ? (
+          <div>
+            Enter username here: <input ref={joinRef} type="text" />
+            <button onClick={onClickJoin}>Join</button>
+          </div>
+        ) : null}
+        {userList.map((user, index) => (
+          <ListItem key={index} name={user} />
+        ))}
       </div>
     </div>
   );

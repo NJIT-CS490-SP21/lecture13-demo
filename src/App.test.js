@@ -1,8 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('Join button disappears', () => {
+  const result = render(<App />);
+
+  const joinButtonElement = screen.getByText('Join');
+  expect(joinButtonElement).toBeInTheDocument();
+
+  fireEvent.click(joinButtonElement);
+  expect(joinButtonElement).not.toBeInTheDocument();
 });
