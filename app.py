@@ -84,6 +84,7 @@ def add_user(username):
                              email='{0}@stuff.com'.format(username))
     db.session.add(new_user)
     db.session.commit()
+    return get_all_users()
 
 def get_all_users():
     all_people = models.Person.query.all()
