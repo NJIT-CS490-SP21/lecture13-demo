@@ -1,11 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Python Server CI
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the ci-demo branch
   push:
+    branches: [ ci-demo ]
+  pull_request:
     branches: [ ci-demo ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -36,7 +38,7 @@ jobs:
         run: pip install -r requirements.txt 
         
       - name: Lint files
-        run: pylint pylint **/*.py
+        run: pylint **/*.py
         
       - name: Run tests
         run: python -m unittest
