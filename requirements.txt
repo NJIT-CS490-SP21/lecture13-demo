@@ -1,5 +1,4 @@
 alembic==1.5.4
-astroid==2.3.0
 awscli==1.18.212
 backcall==0.2.0
 bidict==0.21.2
