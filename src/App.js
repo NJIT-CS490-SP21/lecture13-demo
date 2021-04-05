@@ -1,8 +1,7 @@
-import logo from './logo.svg';
 import './App.css';
-import { ListItem } from './ListItem.js';
 import { useState, useRef, useEffect } from 'react';
 import io from 'socket.io-client';
+import { ListItem } from './ListItem.js';
 
 const socket = io(); // Connects to socket connection
 
@@ -19,7 +18,7 @@ function App() {
       // If your own client sends a message, we add it to the list of messages to
       // render it on the UI.
       setMessages((prevMessages) => [...prevMessages, message]);
-      socket.emit('chat', { message: message });
+      socket.emit('chat', { message });
     }
   }
 
@@ -27,6 +26,16 @@ function App() {
     if (joinRef != null) {
       const username = joinRef.current.value;
       socket.emit('join', { user: username });
+      // fetch('/login', {
+      //   method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({ username: username }) // body data type must match "Content-Type" header
+      // }).then(response => response.json()).then(data => {
+      //   console.log(data);
+      //   setUserList(data.users);
+      // });
       setIsLoggedIn(true);
     }
   }
@@ -50,12 +59,24 @@ function App() {
       console.log(data);
       setUserList(data.users);
     });
+
+    // fetch('/login', {
+    //   method: 'GET', // *GET, POST, PUT, DELETE, etc.
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    // }).then(response => response.json()).then(data => {
+    //   console.log(data);
+    //   setUserList(data.users);
+    // });
   }, []);
 
   return (
     <div>
       <h1>Chat Messages</h1>
-      Enter message here: <input ref={inputRef} type="text" />
+      Enter message here:
+      {' '}
+      <input ref={inputRef} type="text" />
       <button onClick={onClickButton}>Send</button>
       <ul>
         {messages.map((item, index) => (
@@ -66,7 +87,9 @@ function App() {
         <h3>All Users (History)</h3>
         {!isLoggedIn ? (
           <div>
-            Enter username here: <input ref={joinRef} type="text" />
+            Enter username here:
+            {' '}
+            <input ref={joinRef} type="text" />
             <button onClick={onClickJoin}>Join</button>
           </div>
         ) : null}
